@@ -1,0 +1,148 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}Dashboard - EduApp{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.dashboard-grid {
+    display: grid;
+    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.stat-card {
+    flex: 1 1 calc(25% - 20px);
+    height: 150px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+.stat-icon {
+    font-size: 2rem;
+    color: #007bff;
+    margin-right: 15px;
+}
+.stat-content {
+    flex: 1;
+}
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
+{% block page_actions %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="icon-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ total_students|default:"0" }}</h3>
+                <p>Total Students</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="icon-book"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ total_courses|default:"0" }}</h3>
+                <p>Active Courses</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="icon-user-check"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ total_instructors|default:"0" }}</h3>
+                <p >Instructors</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="icon-clipboard"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ total_enrollments|default:"0" }}</h3>
+                <p>Enrollments</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Recent Activity</h2>
+            <a href="{% url 'students:enrollments-list' %}" class="btn btn-primary">View All</a>
+        </div>
+        <div class="activity-list">
+            {% if recent_enrollments %}
+                {% for enrollment in recent_enrollments %}
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="icon-user-plus"></i>
+                    </div>
+                    <div class="activity-content">
+                        <p><strong>{{ enrollment.student.name }}</strong> enrolled in <strong>{{ enrollment.course.name }}</strong></p>
+                        <small class="activity-time">{{ enrollment.created_at|timesince }} ago</small>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="icon-clipboard"></i>
+                    <p>No recent activity</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Quick Actions</h2>
+        </div>
+        <div class="quick-actions">
+            <a class="btn btn-primary" href="{% url 'students:list' %}" class="quick-action">
+                <i class="icon-users"></i>
+                <span>Manage Students</span>
+            </a>
+            <a class="btn btn-primary" href="{% url 'students:courses-list' %}" class="quick-action">
+                <i class="icon-book"></i>
+                <span>View Courses</span>
+            </a>
+            <a class="btn btn-primary" href="{% url 'students:instructors-list' %}" class="quick-action">
+                <i class="icon-user-check"></i>
+                <span>Instructor List</span>
+            </a>
+            <a class="btn btn-primary" href="{% url 'students:enrollments-list' %}" class="quick-action">
+                <i class="icon-clipboard"></i>
+                <span>Track Enrollments</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

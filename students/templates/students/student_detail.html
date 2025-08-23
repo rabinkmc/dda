@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+{% block title %}{{ student.first_name }} {{ student.last_name }} - EduApp{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.student-detail {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    gap: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="student-detail">
+<h1>{{ student.first_name }} {{ student.last_name }}</h1>
+<p><strong>Date of Birth:</strong> {{ student.date_of_birth }}</p>
+<p><strong>User:</strong> {{ student.user }}</p>
+<p><strong>Metadata:</strong>
+    {% for item in student.metadata.all %}
+        {{ item.name }}{% if not forloop.last %}, {% endif %}
+    {% empty %}
+        No metadata
+    {% endfor %}
+</p>
+<div class="actions">
+    <a class="btn btn-primary" href="{% url 'students:update' student.id %}">Edit</a>
+    <a class="btn btn-danger" href="{% url 'students:delete' student.id %}">Delete</a>
+    <a class="btn btn-primary" href="{% url 'students:list' %}">Back to List</a>
+</div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+{% block title %}Instructors - EduApp{% endblock %}
+
+{% block page_title %}Instructors{% endblock %}
+
+{% block content %}
+<div class="card-header">
+<h1>Instructors</h1>
+<form method="get" class="mb-3">
+    <div class="flex-search"> 
+    <input type="text" name="q" placeholder="Search by name..." value="{{ query }}">
+    <button class="btn" type="submit">Search</button>
+    </div>
+</form>
+{% if is_admin %}
+<a class="btn btn-primary" href="{% url 'students:instructors-create' %}">Add New Instructors</a>
+{% endif %}
+</div>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for instructor in instructors %}
+        <tr>
+            <td>{{ instructor.id }}</td>
+            <td>{{ instructor.first_name }} {{instructor.last_name}} </td>
+            <td>
+                <a class="btn btn-primary" href="{% url 'students:instructors-detail' instructor.id %}">View</a>
+                {% if is_admin %}
+                <a class="btn btn-primary" href="{% url 'students:instructors-update' instructor.id %}">Edit</a>
+                <form method="post" action="{% url 'students:instructors-delete' instructor.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No instructor found</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

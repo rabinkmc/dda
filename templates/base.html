@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}EduApp{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}  <!-- Child can add more CSS -->
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    {% block body %}
+        <!-- Common header, nav, footer -->
+        <main>
+            {% block content %}
+                <h1>Welcome to EduApp</h1>
+            {% endblock %}
+        </main>
+    {% endblock %}
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock %}  <!-- Child can add more JS -->
+</body>
+</html>

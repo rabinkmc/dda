@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+{% block title %}{% if student %}Edit{% else %}Add{% endif %} Student - EduApp{% endblock %}
+
+{% block page_title %}Students{% endblock %}
+{% block content %}
+    <div class="form-container">
+        <form 
+            method="post"
+            action="{% if student %}{% url 'students:update' student.pk %}{% else %}{% url 'students:create' %}{% endif %}"
+        >
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="first_name" class="required">
+                First Name
+                </label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                <input type="text" id="first_name" name="first_name" value="{% if form.first_name.value %}{{form.first_name.value}}{% endif %}" required>
+                {% if form.first_name.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.first_name.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name" class="required">
+                    Last Name
+                </label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                <input type="text" id="last_name" name="last_name" value="{% if form.last_name.value %}{{form.last_name.value}} {% endif %}" required>
+                {% if form.last_name.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.last_name.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="required">
+                    Email Address
+                </label>
+                <div class="input-icon">
+                    <i class="fas fa-envelope"></i>
+                <input type="email" id="email" name="email" value="{% if form.email.value %}{{form.email.value}}{% endif %}" required>
+                {% if form.email.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.email.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="date_of_birth">
+                    Date of Birth
+                </label>
+                <div class="input-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                <input type="date" id="date_of_birth" name="date_of_birth" value="{% if form.date_of_birth.value %}{{form.date_of_birth.value|date:'Y-m-d' }}{% endif %}">
+                {% if form.date_of_birth.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.date_of_birth.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'students:list' %}" class="btn btn-secondary">
+                    Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>{% if student %}Update{% else %}Create{% endif %} Student
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formGroups = document.querySelectorAll('.form-group');
+        
+        formGroups.forEach((group, index) => {
+            group.style.opacity = "0";
+            group.style.transform = "translateY(10px)";
+            
+            setTimeout(() => {
+                group.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                group.style.opacity = "1";
+                group.style.transform = "translateY(0)";
+            }, 100 + (index * 100));
+        });
+        
+    });
+</script>
+{% endblock %}

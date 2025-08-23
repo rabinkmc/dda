@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block title %}{{ enrollment.student }} {{ enrollment.score }} - EduApp{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.enrollment-detail {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    gap: 10px;
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="enrollment-detail">
+    <div class="student">
+        <h3>{{ enrollment.student }}</h3>
+    </div>
+    <div class="course">
+        <h3>{{ enrollment.course }}</h3>
+    </div>
+    <div class="grade">
+        <h3>{{ enrollment.grade }}</h3>
+    </div>
+    <div class="score">
+        <h3>{{ enrollment.score }}</h3>
+    </div>
+    <div class="enrollment_date">
+        <h3>{{ enrollment.enrollment_date }}</h3>
+    </div>
+<div class="actions">
+    <a class="btn btn-primary" href="{% url 'students:enrollments-update' enrollment.id %}">Edit</a>
+    <a class="btn btn-danger" href="{% url 'students:enrollments-delete' enrollment.id %}">Delete</a>
+    <a class="btn btn-primary" href="{% url 'students:enrollments-list' %}">Back to List</a>
+</div> 
+</div>
+{% endblock %}
+
+

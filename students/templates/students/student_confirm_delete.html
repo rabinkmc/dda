@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+{% block title %}Delete Student - EduApp{% endblock %}
+
+{% block content %}
+<h1>Delete Student</h1>
+<p>Are you sure you want to delete "{{ student.first_name }} {{ student.last_name }}"?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+</form>
+<a href="{% url 'students:list' %}">Cancel</a>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block title %}{{ course.code }} - EduApp{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.course-detail {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    gap: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-detail">
+<h1>{{ course.code }}</h1>
+<p><strong>Description</strong> {{ course.description }}</p>
+<div>
+    <a class="btn btn-primary" href="{% url 'students:courses-update' course.id %}">Edit</a>
+    <a class="btn btn-danger" href="{% url 'students:courses-delete' course.id %}">Delete</a>
+    <a class="btn btn-primary" href="{% url 'students:courses-list' %}">Back to List</a>
+</div>
+</div>
+{% endblock %}
+
+

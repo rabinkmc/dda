@@ -1,0 +1,157 @@
+{% extends 'layout.html' %}
+{% block title %}{% if enrollment %}Edit{% else %}Add{% endif %} Enrollment - EduApp{% endblock %}
+
+{% block page_title %}Enrollments{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.errorlist {
+    list-style: none;        /* remove default bullets */
+    padding: 12px;           /* space inside the box */
+    margin: 12px 0;          /* space outside the box */
+    border: 1px solid red;   /* red border */
+    border-radius: 8px;      /* rounded corners */
+    background-color: #ffe6e6; /* light red background */
+}
+
+/* Each individual error */
+.errorlist li {
+    color: red;
+    font-size: 0.85rem;      /* small font */
+    margin-bottom: 4px;      /* spacing between errors */
+}
+
+/* Optional: remove margin from last error */
+.errorlist li:last-child {
+    margin-bottom: 0;
+}
+.error {
+    color: red;
+    font-weight: bold;
+}
+</style>
+{% endblock %}
+{% block content %}
+    <div class="form-container">
+        {% if form.non_field_errors %}
+        <ul class="errorlist">
+            {% for error in form.non_field_errors %}
+            <li class="error">
+                {{ error }}
+            </li>
+        </ul>
+        {% endfor %}
+        {% endif %}
+
+        <form 
+            method="post"
+            action="{% if enrollment %}{% url 'students:enrollments-update' enrollment.pk %}{% else %}{% url 'students:enrollments-create' %}{% endif %}"
+        >
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="course">Select course</label>
+                <select id="course" name="course" required>
+                <option value="" disabled {% if not enrollment %}selected{% endif %}>-- Select a course --</option>
+                {% for course in courses %}
+                    <option value="{{ course.id }}"
+                        {% if form.course.value == course.id|stringformat:"s"  %}selected{% endif %}>
+                        {{ course.name }} ({{ course.code }})
+                    </option>
+                {% endfor %}
+                </select>
+                {% if form.course.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.course.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="student">Select student</label>
+                <select id="student" name="student" required>
+                <option value="" disabled {% if not enrollment %}selected{% endif %}>-- Select a student --</option>
+                {% for student in students %}
+                    <option value="{{ student.id }}"
+                        {% if form.student.value == student.id|stringformat:"s" %}selected{% endif %}>
+                    {{ student.first_name }}
+                    </option>
+                {% endfor %}
+                </select>
+                {% if form.student.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.student.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="enrollment_date">
+                    Enrollment Date
+                </label>
+                <div class="input-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                <input 
+                    type="date" id="enrollment_date" name="enrollment_date" 
+                   value="{% if form.enrollment_date.value %}{{ form.enrollment_date.value|date:'Y-m-d' }}{% endif %}"
+                >
+                {% if form.enrollment_date.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.enrollment_date.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="score">
+                    Score
+                </label>
+                <div class="input-icon">
+                    <i class="fas fa-pencil"></i>
+                <input type="number" id="score" name="score" value="{% if form.score.value %}{{form.score.value}}{% endif %}" min="0", max="100" step="0.01">
+                {% if form.score.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.score.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{% url 'students:enrollments-list' %}" class="btn btn-secondary">
+                    Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>{% if enrollment %}Update{% else %}Create{% endif %} Enrollment
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    //document.addEventListener('DOMContentLoaded', function() {
+    //    const formGroups = document.querySelectorAll('.form-group');
+    //
+    //    formGroups.forEach((group, index) => {
+    //        group.style.opacity = "0";
+    //        group.style.transform = "translateY(10px)";
+    //
+    //        setTimeout(() => {
+    //            group.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+    //            group.style.opacity = "1";
+    //            group.style.transform = "translateY(0)";
+    //        }, 100 + (index * 100));
+    //    });
+    //
+    //});
+</script>
+{% endblock %}
