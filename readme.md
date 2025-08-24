@@ -13,19 +13,49 @@
 
 - Currently both user and admin are using the same page including login. Ideally, user and admin having completely different pages is much better. 
 
-## superuser
-```python
-DJANGO_SUPERUSER_USERNAME=admin \
-DJANGO_SUPERUSER_EMAIL=admin@email.com \
+## Todos
+- [ ] Add more tests
+- [ ] Make permissions more granular
+- [ ] Extract the repeated UI style and javascript into a separate file
+
+
+## To run the project locally
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements/dev.txt
+cp sample.env .env
+```
+**Run the migrations**
+
+```bash
+python manage.py migrate
+```
+
+**Create a superuser** 
+```bash
+DJANGO_SUPERUSER_USERNAME=superuser\
+DJANGO_SUPERUSER_EMAIL=superuser@email.com \
 DJANGO_SUPERUSER_PASSWORD=test123 \
 python manage.py createsuperuser --noinput
 ```
+** seed data **
+To seed the database with some initial data, you can run the following command. 
+This will create a few students and instructors with random data.
 
-## seed permissions
+```bash
+python seed_data.py
+```
+**Run the development server**
+
+```bash
+python manage.py runserver
+```
 
 ## Docker
 
-for docker, there are two profiles. One is `dev` and the other is `prod`. Specify the profile in the `.env` file with `COMPOSE_PROFILES=dev` or `COMPOSE_PROFILES=prod`.
+for docker, there are two profiles. One is `dev` and the other is `prod`. 
+Specify the profile in the `.env` file with `COMPOSE_PROFILES=dev` or `COMPOSE_PROFILES=prod`.
 
 To run the docker container, run the following command:
 
@@ -33,7 +63,7 @@ To run the docker container, run the following command:
 docker compose up --build --detach
 ```
 
-## test
+## Test
 ```
 python manage.py test 
 ```

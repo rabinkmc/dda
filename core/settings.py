@@ -100,7 +100,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "users.User"
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 LOGIN_URL = "/users/login/"  # URL where login form is located
 LOGIN_REDIRECT_URL = "/"  # Where to redirect after login if no 'next' parameter
@@ -108,4 +107,5 @@ LOGIN_REDIRECT_URL = "/"  # Where to redirect after login if no 'next' parameter
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-STATIC_ROOT = BASE_DIR / "staticfiles"  # For production
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
