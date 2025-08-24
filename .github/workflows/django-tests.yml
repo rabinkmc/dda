@@ -27,7 +27,14 @@ jobs:
 
     env:
       DJANGO_SETTINGS_MODULE: core.settings
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      DEBUG: False 
+      SECRET_KEY: )zq*36xw*o6i+)e0__rj6u_l7n&9-=v-9nv^*&+6z32lqgmz!( 
+      DB_PASSWORD: postgres
+      DB_USER: postgres 
+      DB_NAME: test_db
+      DB_PORT: 5432 
+      DB_HOST: localhost 
+      ALLOWED_HOSTS: "localhost," 
 
     steps:
       - name: Checkout code
