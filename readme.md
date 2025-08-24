@@ -69,4 +69,4 @@ python manage.py test
 ```
 
 ## Deployment
-Current setup is to push to remote repo and run docker container
+Current setup is to push to remote repo and run docker container with nginx acting as reverse proxy
