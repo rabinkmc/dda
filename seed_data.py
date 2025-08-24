@@ -131,25 +131,6 @@ def main():
                 grade=get_grade(),
                 score=get_score(),
             )
-    # preference
-    # populate metadata to track preferences
-    # populate metadata to track extra cocurricular activities
-    MetaData.objects.bulk_create(
-        [
-            MetaData(
-                key="preferences.theme",
-                value="dark",
-            ),
-            MetaData(
-                key="preferences.theme",
-                value="dark",
-            ),
-            MetaData(
-                key="cocurricular_activities",
-                value="['wushu', 'basketball', 'drawing']",
-            ),
-        ]
-    )
     create_metadata()
 
 
