@@ -5,24 +5,27 @@
 
 {% block content %}
 <div class="card-header">
-<h1>Metadata</h1>
-<form method="get" class="mb-3">
-    <div class="flex-search"> 
-    <input type="text" name="q" placeholder="Search by key..." value="{{ query }}">
-    <button class="btn" type="submit">Search</button>
-    </div>
-</form>
-{% if is_admin %}
-<a href="{% url 'common:metadata-create' %}" class="btn btn-primary">Add New Key</a>
-{% endif %}
+    <h1><i class="fas fa-database"></i> Metadata</h1>
+    {% if is_admin %}
+    <a href="{% url 'common:metadata-create' %}" class="btn btn-success">
+        <i class="fas fa-plus-circle"></i> Add New Key
+    </a>
+    {% endif %}
 </div>
+
+<form method="get" class="mb-3 flex-search">
+    <input type="text" name="q" placeholder="🔍 Search by key..." value="{{ query }}">
+    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> Search</button>
+</form>
+
+<div class="table-responsive">
 <table class="data-table">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Actions</th>
+            <th><i class="fas fa-hashtag"></i> ID</th>
+            <th><i class="fas fa-key"></i> Key</th>
+            <th><i class="fas fa-align-left"></i> Value</th>
+            <th><i class="fas fa-cogs"></i> Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -31,38 +34,48 @@
             <td>{{ metadata.id }}</td>
             <td>{{ metadata.key }}</td>
             <td>{{ metadata.value }}</td>
-            <td>
-                <a class="btn btn-primary" href="{% url 'common:metadata-detail' metadata.id %}">View</a>
+            <td class="flex gap-2">
+                <a class="btn btn-info" href="{% url 'common:metadata-detail' metadata.id %}">
+                    <i class="fas fa-eye"></i> View
+                </a>
                 {% if is_admin %}
-                <a class="btn btn-primary" href="{% url 'common:metadata-update' metadata.id %}">Edit</a>
+                <a class="btn btn-warning" href="{% url 'common:metadata-update' metadata.id %}">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
                 <form method="post" action="{% url 'common:metadata-delete' metadata.id %}" style="display:inline;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
                 </form>
                 {% endif %}
             </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="4">No metadata found.</td>
+            <td colspan="4" class="text-center">
+                <i class="fas fa-exclamation-circle"></i> No metadata found.
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<div class="pagination">
+</div>
+
+<div class="pagination mt-3">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a href="?page=1"><i class="fas fa-angle-double-left"></i> first</a>
+            <a href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i> previous</a>
         {% endif %}
 
         <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
         </span>
 
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            <a href="?page={{ page_obj.next_page_number }}">next <i class="fas fa-angle-right"></i></a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last <i class="fas fa-angle-double-right"></i></a>
         {% endif %}
     </span>
 </div>

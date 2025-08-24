@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% block title %}{{ instructor.first_name}} {{instructor.last_name }} - EduApp{% endblock %}
+{% block title %}{{ instructor.first_name }} {{ instructor.last_name }} - EduApp{% endblock %}
 
 {% block extra_css %}
 {{ block.super }}
@@ -9,23 +9,78 @@
     flex-direction: column;
     max-width: 800px;
     margin: 0 auto;
+    gap: 15px;
+}
+
+.instructor-detail h2 {
+    margin-bottom: 10px;
+}
+
+.metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
+    margin-top: 10px;
+}
+
+.metadata-item {
+    background: #f1f3f5;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.metadata-item strong {
+    margin-right: 5px;
+    color: #333;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.actions form button {
+    height: 38px;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="instructor-detail">
-    <h2>{{ instructor.first_name }} {{instructor.last_name}}</h2>
-<div class="actions">
-    <a class="btn btn-primary" href="{% url 'students:instructors-update' instructor.id %}">Edit</a>
-    <form method="post" action="{% url 'students:instructors-delete' instructor.id %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-    <a class="btn btn-primary" href="{% url 'students:instructors-list' %}">Back to List</a>
-</div>
+    <h2>{{ instructor.first_name }} {{ instructor.last_name }}</h2>
+
+    <h4>Metadata</h4>
+    <div class="metadata-grid">
+        {% for item in instructor.metadata.all %}
+            <div class="metadata-item">
+                <strong>{{ item.key }}:</strong> <span>{{ item.value }}</span>
+            </div>
+        {% empty %}
+            <p>No metadata available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="actions mt-3">
+        <a class="btn btn-primary" href="{% url 'students:instructors-update' instructor.id %}">Edit</a>
+
+        <form method="post" action="{% url 'students:instructors-delete' instructor.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+
+        <a class="btn btn-secondary" href="{% url 'students:instructors-list' %}">Back to List</a>
+    </div>
 </div>
 {% endblock %}
-
-

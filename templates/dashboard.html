@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block title %}Dashboard - EduApp{% endblock %}
-
 {% block page_title %}Dashboard{% endblock %}
 
 {% block extra_css %}
@@ -10,9 +9,8 @@
 <style>
 .dashboard-grid {
     display: grid;
-    grid-template-rows: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    align-items: start;
+    gap: 30px;
+    margin-top: 20px;
 }
 .stats-grid {
     display: flex;
@@ -21,70 +19,144 @@
 }
 .stat-card {
     flex: 1 1 calc(25% - 20px);
+    min-width: 200px;
     height: 150px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 8px;
+    border-radius: 16px;
     padding: 20px;
     display: flex;
     align-items: center;
+    color: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 .stat-icon {
-    font-size: 2rem;
-    color: #007bff;
+    font-size: 2.5rem;
     margin-right: 15px;
 }
-.stat-content {
-    flex: 1;
+.stat-content h3 {
+    margin: 0;
+    font-size: 2rem;
 }
-.stat-label {
-    font-size: 0.9rem;
-    color: #6c757d;
+.stat-content p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+/* Different card colors */
+.stat-students { background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+.stat-courses { background: linear-gradient(135deg, #66bb6a, #43a047); }
+.stat-instructors { background: linear-gradient(135deg, #ffa726, #fb8c00); }
+.stat-enrollments { background: linear-gradient(135deg, #ab47bc, #8e24aa); }
+
+/* Section styling */
+.dashboard-section {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Recent activity */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-left: 4px solid #007bff;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+.activity-icon {
+    margin-right: 12px;
+    color: #007bff;
+    font-size: 1.3rem;
+}
+.activity-content p {
+    margin: 0;
+}
+.activity-time {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Quick actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+}
+.quick-actions .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 120px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.quick-actions .btn i {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+.quick-actions .btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+}
+.empty-state i {
+    display: block;
+    font-size: 2rem;
+    margin-bottom: 8px;
 }
 </style>
-{% endblock %}
-
-{% block page_actions %}
 {% endblock %}
 
 {% block content %}
 <div class="dashboard-grid">
     <!-- Statistics Cards -->
     <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="icon-users"></i>
-            </div>
+        <div class="stat-card stat-students">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
             <div class="stat-content">
                 <h3>{{ total_students|default:"0" }}</h3>
                 <p>Total Students</p>
             </div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="icon-book"></i>
-            </div>
+        <div class="stat-card stat-courses">
+            <div class="stat-icon"><i class="fas fa-book"></i></div>
             <div class="stat-content">
                 <h3>{{ total_courses|default:"0" }}</h3>
                 <p>Active Courses</p>
             </div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="icon-user-check"></i>
-            </div>
+        <div class="stat-card stat-instructors">
+            <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
             <div class="stat-content">
                 <h3>{{ total_instructors|default:"0" }}</h3>
-                <p >Instructors</p>
+                <p>Instructors</p>
             </div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="icon-clipboard"></i>
-            </div>
+        <div class="stat-card stat-enrollments">
+            <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
             <div class="stat-content">
                 <h3>{{ total_enrollments|default:"0" }}</h3>
                 <p>Enrollments</p>
@@ -95,76 +167,51 @@
     <!-- Recent Activity -->
     <div class="dashboard-section">
         <div class="section-header">
-            <h2>Recent Activity</h2>
+            <h2><i class="fas fa-history"></i> Recent Activity</h2>
             <a href="{% url 'students:enrollments-list' %}" class="btn btn-primary">View All</a>
         </div>
         <div class="activity-list">
             {% if recent_enrollments %}
                 {% for enrollment in recent_enrollments %}
                 <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="icon-user-plus"></i>
-                    </div>
+                    <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
                     <div class="activity-content">
-                        <p><strong>{{ enrollment.student.name }}</strong> enrolled in <strong>{{ enrollment.course.name }}</strong></p>
+                        <p><strong>{{ enrollment.student.name }}</strong> enrolled in 
+                        <strong>{{ enrollment.course.name }}</strong></p>
                         <small class="activity-time">{{ enrollment.created_at|timesince }} ago</small>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
                 <div class="empty-state">
-                    <i class="icon-clipboard"></i>
+                    <i class="fas fa-clipboard"></i>
                     <p>No recent activity</p>
                 </div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Quick Links -->
+    <!-- Quick Actions -->
     <div class="dashboard-section">
         <div class="section-header">
-            <h2>Quick Actions</h2>
+            <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
         </div>
         <div class="quick-actions">
-            <a class="btn btn-primary" href="{% url 'students:list' %}" class="quick-action">
-                <i class="icon-users"></i>
-                <span>
-                {% if is_admin %}
-                Manage Students
-                {% else %}
-                View Students
-                {% endif %}
-                </span>
+            <a class="btn btn-primary" href="{% url 'students:list' %}">
+                <i class="fas fa-users"></i>
+                {% if is_admin %}Manage Students{% else %}View Students{% endif %}
             </a>
-            <a class="btn btn-primary" href="{% url 'students:courses-list' %}" class="quick-action">
-                <i class="icon-book"></i>
-                <span>
-                {% if is_admin %}
-                Manage Courses 
-                {% else %}
-                View Courses
-                {% endif %}
-                </span>
+            <a class="btn btn-primary" href="{% url 'students:courses-list' %}">
+                <i class="fas fa-book"></i>
+                {% if is_admin %}Manage Courses{% else %}View Courses{% endif %}
             </a>
-            <a class="btn btn-primary" href="{% url 'students:instructors-list' %}" class="quick-action">
-                <i class="icon-user-check"></i>
-                <span>
-                {% if is_admin %}
-                Manage Instructors 
-                {% else %}
-                View Instructors
-                {% endif %}
-                </span>
+            <a class="btn btn-primary" href="{% url 'students:instructors-list' %}">
+                <i class="fas fa-chalkboard-teacher"></i>
+                {% if is_admin %}Manage Instructors{% else %}View Instructors{% endif %}
             </a>
-            <a class="btn btn-primary" href="{% url 'students:enrollments-list' %}" class="quick-action">
-                <i class="icon-clipboard"></i>
-                <span>
-                {% if is_admin %}
-                Manage Enrollments 
-                {% else %}
-                View Enrollments
-                {% endif %}
-                </span>
+            <a class="btn btn-primary" href="{% url 'students:enrollments-list' %}">
+                <i class="fas fa-clipboard-list"></i>
+                {% if is_admin %}Manage Enrollments{% else %}View Enrollments{% endif %}
             </a>
         </div>
     </div>

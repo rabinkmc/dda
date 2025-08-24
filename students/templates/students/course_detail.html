@@ -9,24 +9,86 @@
     flex-direction: column;
     max-width: 800px;
     margin: 0 auto;
+    gap: 15px;
+}
+
+.course-detail h1 {
+    margin-bottom: 10px;
+}
+
+.course-info p {
+    margin: 6px 0;
+    font-size: 15px;
+}
+
+.metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 10px;
+    margin-top: 10px;
+}
+
+.metadata-item {
+    background: #f1f3f5;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.metadata-item strong {
+    margin-right: 5px;
+    color: #333;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.actions form button {
+    height: 38px;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="course-detail">
-<h1>{{ course.code }}</h1>
-<p><strong>Description</strong> {{ course.description }}</p>
-<div>
-    <a class="btn btn-primary" href="{% url 'students:courses-update' course.id %}">Edit</a>
-    <form method="post" action="{% url 'students:courses-delete' course.id %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Delete</button>
-    </form>
-    <a class="btn btn-primary" href="{% url 'students:courses-list' %}">Back to List</a>
-</div>
+    <h1>{{ course.code }}</h1>
+    <div class="course-info">
+        <p><strong>Description:</strong> {{ course.description }}</p>
+    </div>
+
+    <h4>Metadata</h4>
+    <div class="metadata-grid">
+        {% for item in course.metadata.all %}
+            <div class="metadata-item">
+                <strong>{{ item.key }}:</strong> <span>{{ item.value }}</span>
+            </div>
+        {% empty %}
+            <p>No metadata available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="actions mt-3">
+        <a class="btn btn-primary" href="{% url 'students:courses-update' course.id %}">Edit</a>
+
+        <form method="post" action="{% url 'students:courses-delete' course.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+
+        <a class="btn btn-secondary" href="{% url 'students:courses-list' %}">Back to List</a>
+    </div>
 </div>
 {% endblock %}
-
-

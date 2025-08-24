@@ -53,11 +53,11 @@
             <td>{{ instructor.id }}</td>
             <td>{{ instructor.first_name }} {{ instructor.last_name }}</td>
             <td>
-                <a class="btn btn-primary" href="{% url 'students:instructors-detail' instructor.id %}">
+                <a class="btn btn-info" href="{% url 'students:instructors-detail' instructor.id %}">
                     <i class="fas fa-eye"></i>View
                 </a>
                 {% if is_admin %}
-                <a class="btn btn-primary" href="{% url 'students:instructors-update' instructor.id %}">
+                <a class="btn btn-info" href="{% url 'students:instructors-update' instructor.id %}">
                     <i class="fas fa-edit"></i>Edit
                 </a>
                 <form method="post" action="{% url 'students:instructors-delete' instructor.id %}" style="display:inline;">

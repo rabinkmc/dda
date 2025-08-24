@@ -63,11 +63,11 @@
             <td>{{ enrollment.grade }}</td>
             <td>{{ enrollment.score }}</td>
             <td>
-                <a class="btn btn-primary" href="{% url 'students:enrollments-detail' enrollment.id %}">
+                <a class="btn btn-info" href="{% url 'students:enrollments-detail' enrollment.id %}">
                     <i class="fas fa-eye"></i>View
                 </a>
                 {% if is_admin %}
-                <a class="btn btn-primary" href="{% url 'students:enrollments-update' enrollment.id %}">
+                <a class="btn btn-info" href="{% url 'students:enrollments-update' enrollment.id %}">
                     <i class="fas fa-edit"></i>Edit
                 </a>
                 <form method="post" action="{% url 'students:enrollments-delete' enrollment.id %}" style="display:inline;">
