@@ -10,8 +10,6 @@ student credentials: (currently readonly)
 - username: `rakesh`, password: `test123`
 - username: `priyanka`, password: `test123`
 
-normaluser credentials:
-
 ## Design decisions
 
 - Each student and instructor is also a user. So, there is one to one relationship between user and student/instructor.
