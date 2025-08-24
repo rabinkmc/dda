@@ -9,10 +9,12 @@ django.setup()
 # Now you can import models and use Django ORM
 from students.models import Student, Course, Instructor
 from django.contrib.auth import get_user_model
+from django.db import transaction
 
 User = get_user_model()
 
 
+@transaction.atomic()
 def main():
     # create users
     User.objects.create_superuser(
