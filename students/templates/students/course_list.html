@@ -14,9 +14,6 @@
         margin-right: 10px;
         color: #007bff;
     }
-    .pagination a i {
-        margin: 0 2px;
-    }
 </style>
 {% endblock %}
 {% block content %}
@@ -79,27 +76,6 @@
         {% endfor %}
     </tbody>
 </table>
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">
-                <i class="fas fa-angle-double-left"></i> first
-            </a>
-            <a href="?page={{ page_obj.previous_page_number }}">
-                <i class="fas fa-angle-left"></i> previous
-            </a>
-        {% endif %}
-        <span class="current">
-            <i class="fas fa-file-alt"></i> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-        </span>
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">
-                next <i class="fas fa-angle-right"></i>
-            </a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">
-                last <i class="fas fa-angle-double-right"></i>
-            </a>
-        {% endif %}
-    </span>
-</div>
+
+{% include "partials/pagination.html" %}
 {% endblock %}

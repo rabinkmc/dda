@@ -1,0 +1,36 @@
+<div class="pagination">
+    <div class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1&limit={{ request.GET.limit }}">
+                <i class="fas fa-angle-double-left"></i> first
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}&limit={{ request.GET.limit }}">
+                <i class="fas fa-angle-left"></i> previous
+            </a>
+        {% endif %}
+
+        <span class="current">
+            <i class="fas fa-file-alt"></i> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&limit={{ request.GET.limit }}">
+                next <i class="fas fa-angle-right"></i>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&limit={{ request.GET.limit }}">
+                last <i class="fas fa-angle-double-right"></i>
+            </a>
+        {% endif %}
+    </div>
+
+    <form method="get" class="per-page-form">
+        <select name="limit" id="per-page" onchange="this.form.submit()">
+            <option value="2"  {% if request.GET.limit == "2" %}selected{% endif %}>2</option>
+            <option value="5"  {% if request.GET.limit == "5" %}selected{% endif %}>5</option>
+            <option value="10" {% if request.GET.limit == "10" or not request.GET.limit %}selected{% endif %}>10</option>
+            <option value="15" {% if request.GET.limit == "15" %}selected{% endif %}>15</option>
+            <option value="20" {% if request.GET.limit == "20" %}selected{% endif %}>20</option>
+        </select>
+        <input type="hidden" name="page" value="1">
+    </form>
+</div>

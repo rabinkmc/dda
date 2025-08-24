@@ -609,34 +609,43 @@ input:focus {
 
 /* Pagination styles */
 .pagination {
-    text-align: center;
-    margin: 20px 0;
+    display: flex;
+    justify-content: space-between; /* links on left, dropdown on right */
+    align-items: center;            /* vertical centering */
+    margin-top: 1rem;
+    gap: 1rem;                      /* spacing between items */
 }
-.pagination ul {
-    list-style: none;
-    padding: 0;
-    display: inline-block;
-}
-.pagination li {
-    display: inline;
+
+.step-links a {
     margin: 0 5px;
-}
-.pagination a {
-    color: #007bff;
     text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    border: 1px solid #ddd;
-    transition: background 0.2s;
+    color: #007bff;
 }
-.pagination a:hover {
-    background: #f0f0f0;
-    border-color: #007bff;
+
+.step-links a:hover {
+    text-decoration: underline;
 }
-.pagination .current {
+
+.step-links .current {
+    margin: 0 8px;
     font-weight: bold;
-    color: #333;
-    padding: 5px 10px;
+}
+
+.per-page-form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.per-page-form label {
+    font-size: 14px;
+    color: #555;
+}
+
+.per-page-form select {
+    padding: 3px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 .mb-3 {
     margin-bottom: 12px;
