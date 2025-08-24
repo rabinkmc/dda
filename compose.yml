@@ -47,6 +47,8 @@ services:
       - "8000:8000"
     environment:
       <<: *env
+    volumes:
+      - ./staticfiles:/app/staticfiles
     depends_on:
       - db
     profiles: [prod]
