@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden
 from django.shortcuts import render
-from students.models import Student, Course, Instructor, Enrollment
+from students.models import Student, Course, Instructor, Enrollment, MetaData
 from students.forms import CourseForm, StudentForm, InstructorForm, EnrollmentForm
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
@@ -70,7 +70,7 @@ def student_detail(request, pk):
 
 @user_passes_test(is_admin)
 def student_create(request):
-    form = StudentForm()
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = StudentForm(request.POST)
         if form.is_valid():
@@ -79,13 +79,21 @@ def student_create(request):
                 last_name=form.cleaned_data["last_name"],
                 email=form.cleaned_data["email"],
             )
-            Student.objects.create(
+            student = Student.objects.create(
                 user=user,
                 date_of_birth=form.cleaned_data.get("date_of_birth"),
             )
+            metadata = form.cleaned_data.get("metadata", [])
+            if metadata:
+                student.metadata.set(metadata)
+            messages.success(request, "Student has been created successfully!")
             return redirect("students:list")
+    else:
+        form = StudentForm()
     return render(
-        request, "students/student_form.html", {"form": form, "student": None}
+        request,
+        "students/student_form.html",
+        {"form": form, "student": None, "metadata": metadata_qs},
     )
 
 
@@ -93,6 +101,7 @@ def student_create(request):
 def student_update(request, pk):
     student = get_object_or_404(Student, pk=pk)
     user = student.user
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = StudentForm(request.POST, instance=student)
         if form.is_valid():
@@ -102,22 +111,30 @@ def student_update(request, pk):
             student.date_of_birth = form.cleaned_data.get(
                 "date_of_birth", student.date_of_birth
             )
+            metadata = form.cleaned_data.get("metadata", [])
             student.save()
+            student.metadata.set(metadata)
             user.save()
             messages.success(
                 request, "Student information has been saved successfully!"
             )
             return redirect("students:list")
+        else:
+            print(form.errors)
+
     else:
         initial_data = {
             "first_name": user.first_name,
             "last_name": user.last_name,
             "date_of_birth": student.date_of_birth,
             "email": user.email,
+            "metadata": student.metadata.all(),
         }
-        form = StudentForm(initial=initial_data)
+        form = StudentForm(initial=initial_data, instance=student)
     return render(
-        request, "students/student_form.html", {"form": form, "student": student}
+        request,
+        "students/student_form.html",
+        {"form": form, "student": student, "metadata": metadata_qs},
     )
 
 
@@ -162,30 +179,42 @@ def course_detail(request, pk):
 
 @user_passes_test(is_admin)
 def course_create(request):
-    form = CourseForm()
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = CourseForm(request.POST)
         if form.is_valid():
-            Course.objects.create(
+            course = Course.objects.create(
                 name=form.cleaned_data["name"],
                 code=form.cleaned_data["code"],
                 description=form.cleaned_data["description"],
             )
+            metadata = form.cleaned_data.get("metadata", [])
+            if metadata:
+                course.metadata.set(metadata)
             messages.success(request, "Course has been created successfully!")
             return redirect("students:courses-list")
-    return render(request, "students/course_form.html", {"form": form, "course": None})
+    else:
+        form = CourseForm()
+    return render(
+        request,
+        "students/course_form.html",
+        {"form": form, "course": None, "metadata": metadata_qs},
+    )
 
 
 @user_passes_test(is_admin)
 def course_update(request, pk):
     course = get_object_or_404(Course, pk=pk)
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = CourseForm(request.POST, instance=course)
         if form.is_valid():
             course.name = form.cleaned_data["name"]
             course.code = form.cleaned_data["code"]
             course.description = form.cleaned_data["description"]
+            metadata = form.cleaned_data.get("metadata", [])
             course.save()
+            course.metadata.set(metadata)
             messages.success(request, "Course has been updated successfully!")
             return redirect("students:courses-list")
     else:
@@ -193,10 +222,13 @@ def course_update(request, pk):
             "name": course.name,
             "code": course.code,
             "description": course.description,
+            "metadata": course.metadata.all(),
         }
-        form = CourseForm(initial=initial_data)
+        form = CourseForm(initial=initial_data, instance=course)
     return render(
-        request, "students/course_form.html", {"form": form, "course": course}
+        request,
+        "students/course_form.html",
+        {"form": form, "course": course, "metadata": metadata_qs},
     )
 
 
@@ -229,7 +261,10 @@ def instructor_list(request):
     return render(
         request,
         "students/instructor_list.html",
-        {"instructors": instructors, "page_obj": page_obj},
+        {
+            "instructors": instructors,
+            "page_obj": page_obj,
+        },
     )
 
 
@@ -243,7 +278,8 @@ def instructor_detail(request, pk):
 
 @user_passes_test(is_admin)
 def instructor_create(request):
-    form = InstructorForm()
+    courses = Course.objects.all()
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = InstructorForm(request.POST)
         if form.is_valid():
@@ -252,17 +288,21 @@ def instructor_create(request):
                 last_name=form.cleaned_data["last_name"],
                 email=form.cleaned_data["email"],
             )
-            instructor = Instructor.objects.create(
-                user=user,
-            )
-            courses = form.cleaned_data.get("courses", [])
-            if courses:
-                instructor.courses.set(courses)
-
+            instructor = Instructor.objects.create(user=user)
+            courses_selected = form.cleaned_data.get("courses", [])
+            metadata = form.cleaned_data.get("metadata", [])
+            if courses_selected:
+                instructor.courses.set(courses_selected)
+            if metadata:
+                instructor.metadata.set(metadata)
             messages.success(request, "Instructor has been created successfully!")
             return redirect("students:instructors-list")
+    else:
+        form = InstructorForm()
     return render(
-        request, "students/instructor_form.html", {"form": form, "instructor": None}
+        request,
+        "students/instructor_form.html",
+        {"form": form, "instructor": None, "courses": courses, "metadata": metadata_qs},
     )
 
 
@@ -270,6 +310,8 @@ def instructor_create(request):
 def instructor_update(request, pk):
     instructor = get_object_or_404(Instructor, pk=pk)
     user = instructor.user
+    courses = Course.objects.all()
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = InstructorForm(request.POST, instance=instructor)
         if form.is_valid():
@@ -278,9 +320,10 @@ def instructor_update(request, pk):
             user.email = form.cleaned_data["email"]
             user.save()
             instructor.save()
-            courses = form.cleaned_data.get("courses", [])
-            if courses:
-                instructor.courses.set(form.cleaned_data["courses"])
+            courses_selected = form.cleaned_data.get("courses", [])
+            metadata = form.cleaned_data.get("metadata", [])
+            instructor.courses.set(courses_selected)
+            instructor.metadata.set(metadata)
             messages.success(
                 request, "Instructor information has been saved successfully!"
             )
@@ -292,14 +335,20 @@ def instructor_update(request, pk):
             "first_name": user.first_name,
             "last_name": user.last_name,
             "email": user.email,
+            "courses": instructor.courses.all(),
+            "metadata": instructor.metadata.all(),
         }
-        form = InstructorForm(initial=initial_data)
+        form = InstructorForm(initial=initial_data, instance=instructor)
 
-    courses = Course.objects.all()
     return render(
         request,
         "students/instructor_form.html",
-        {"form": form, "instructor": instructor, "courses": courses},
+        {
+            "form": form,
+            "instructor": instructor,
+            "courses": courses,
+            "metadata": metadata_qs,
+        },
     )
 
 
@@ -357,25 +406,31 @@ def enrollment_detail(request, pk):
 
 @user_passes_test(is_admin)
 def enrollment_create(request):
-    form = EnrollmentForm()
+    students = Student.objects.all()
+    courses = Course.objects.all()
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = EnrollmentForm(request.POST)
         if form.is_valid():
-            Enrollment.objects.create(
+            enrollment = Enrollment.objects.create(
                 student=form.cleaned_data["student"],
                 course=form.cleaned_data["course"],
                 grade=form.cleaned_data.get("grade"),
                 score=form.cleaned_data.get("score"),
             )
+            metadata = form.cleaned_data.get("metadata", [])
+            if metadata:
+                enrollment.metadata.set(metadata)
             messages.success(request, "Enrollment has been created successfully!")
             return redirect("students:enrollments-list")
-    students = Student.objects.all()
-    courses = Course.objects.all()
+    else:
+        form = EnrollmentForm()
     context = {
         "form": form,
         "enrollment": None,
         "students": students,
         "courses": courses,
+        "metadata": metadata_qs,
     }
     return render(request, "students/enrollment_form.html", context=context)
 
@@ -383,6 +438,9 @@ def enrollment_create(request):
 @user_passes_test(is_admin)
 def enrollment_update(request, pk):
     enrollment = get_object_or_404(Enrollment, pk=pk)
+    students = Student.objects.all()
+    courses = Course.objects.all()
+    metadata_qs = MetaData.objects.all()
     if request.method == "POST":
         form = EnrollmentForm(request.POST, instance=enrollment)
         if form.is_valid():
@@ -390,7 +448,9 @@ def enrollment_update(request, pk):
             enrollment.course = form.cleaned_data["course"]
             enrollment.grade = form.cleaned_data.get("grade")
             enrollment.score = form.cleaned_data.get("score")
+            metadata = form.cleaned_data.get("metadata", [])
             enrollment.save()
+            enrollment.metadata.set(metadata)
             messages.success(request, "Enrollment has been updated successfully!")
             return redirect("students:enrollments-list")
     else:
@@ -400,10 +460,9 @@ def enrollment_update(request, pk):
             "enrollment_date": getattr(enrollment, "enrollment_date", None),
             "grade": getattr(enrollment, "grade", None),
             "score": getattr(enrollment, "score", None),
+            "metadata": enrollment.metadata.all(),
         }
-        form = EnrollmentForm(initial=initial_data)
-    students = Student.objects.all()
-    courses = Course.objects.all()
+        form = EnrollmentForm(initial=initial_data, instance=enrollment)
     return render(
         request,
         "students/enrollment_form.html",
@@ -412,6 +471,7 @@ def enrollment_update(request, pk):
             "enrollment": enrollment,
             "students": students,
             "courses": courses,
+            "metadata": metadata_qs,
         },
     )
 

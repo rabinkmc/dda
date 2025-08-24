@@ -1,6 +1,101 @@
 {% extends 'layout.html' %}
 {% block title %}{% if instructor %}Edit{% else %}Add{% endif %} Instructor - EduApp{% endblock %}
 
+{% block extra_css %}
+{{ block.super }}
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.checkbox-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+.checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-item.checked {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.metadata-container {
+    width: 100%;
+}
+
+.metadata-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.metadata-label i {
+    margin-right: 8px;
+    color: #666;
+}
+
+.courses-container {
+    width: 100%;
+}
+
+.courses-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.courses-label i {
+    margin-right: 8px;
+    color: #666;
+}
+
+.courses-select {
+    width: 100%;
+    min-height: 120px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.courses-select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+</style>
+{% endblock %}
+
 {% block page_title %}Instructors{% endblock %}
 
 {% block content %}
@@ -10,57 +105,63 @@
             action="{% if instructor %}{% url 'students:instructors-update' instructor.pk %}{% else %}{% url 'students:instructors-create' %}{% endif %}"
         >
             {% csrf_token %}
-            <div class="form-group">
-                <label for="first_name" class="required">
-                First Name
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-user"></i>
-                <input type="text" id="first_name" name="first_name" value="{% if form.first_name.value %}{{form.first_name.value}}{% endif %}" required>
-                {% if form.first_name.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.first_name.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+            <div class="grid">
+                <div class="form-group">
+                    <label for="first_name" class="required">
+                    First Name
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    <input type="text" id="first_name" name="first_name" value="{% if form.first_name.value %}{{form.first_name.value}}{% endif %}" required>
+                    {% if form.first_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.first_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="last_name" class="required">
+                    Last Name
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    <input type="text" id="last_name" name="last_name" value="{% if form.last_name.value %}{{form.last_name.value}}{% endif %}" required>
+                    {% if form.last_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.last_name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="required">
+                        Email Address
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" value="{% if form.email.value %}{{form.email.value}}{% endif %}" required>
+                    {% if form.email.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="last_name" class="required">
-                Last Name
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-user"></i>
-                <input type="text" id="last_name" name="last_name" value="{% if form.last_name.value %}{{form.last_name.value}}{% endif %}" required>
-                {% if form.last_name.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.last_name.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+            
+            <div class="form-group courses-container">
+                <div class="courses-label">
+                    <i class="fas fa-book"></i>
+                    <label for="courses">Assign Courses</label>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="email" class="required">
-                    Email Address
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-envelope"></i>
-                <input type="email" id="email" name="email" value="{% if form.email.value %}{{form.email.value}}{% endif %}" required>
-                {% if form.email.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.email.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="courses">Assign Courses</label>
-                <select id="courses" name="courses" multiple>
+                <select id="courses" name="courses" multiple class="courses-select">
                     {% for course in courses %}
                         <option value="{{ course.id }}"
                             {% if course.id in form.courses.value %}selected{% endif %}>
@@ -76,12 +177,35 @@
                     </ul>
                 {% endif %}
             </div>
+            
+            <div class="form-group metadata-container">
+                <div class="metadata-label">
+                    <i class="fas fa-tags"></i>
+                    <label for="id_metadata">Select Metadata</label>
+                </div>
+                <div class="checkbox-group">
+                    {% for choice in form.metadata %}
+                        <div class="checkbox-item {% if choice.data.selected %}checked{% endif %}">
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.metadata.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.metadata.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
             <div class="form-actions">
                 <a href="{% url 'students:instructors-list' %}" class="btn btn-secondary">
                     Back to List
                 </a>
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i>{% if instructor %}Update{% else %}Create{% endif %} Course
+                    <i class="fas fa-save"></i>{% if instructor %}Update{% else %}Create{% endif %} Instructor
                 </button>
             </div>
         </form>
@@ -105,6 +229,35 @@
             }, 100 + (index * 100));
         });
         
+        // Handle checkbox styling for metadata
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
+        checkboxItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            
+            // Initial state
+            if (checkbox && checkbox.checked) {
+                item.classList.add('checked');
+            }
+            
+            // Handle checkbox changes
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            }
+            
+            // Make the entire item clickable
+            item.addEventListener('click', function(e) {
+                if (e.target.type !== 'checkbox') {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
     });
 </script>
 {% endblock %}

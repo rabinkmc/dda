@@ -1,11 +1,100 @@
 {% extends 'layout.html' %}
 {% block title %}{% if enrollment %}Edit{% else %}Add{% endif %} Enrollment - EduApp{% endblock %}
 
-{% block page_title %}Enrollments{% endblock %}
+{% block page_title %} Enrollment {% endblock %}
 
 {% block extra_css %}
 {{ block.super }}
 <style>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.checkbox-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+.checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-item.checked {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.metadata-container {
+    width: 100%;
+}
+
+.metadata-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.metadata-label i {
+    margin-right: 8px;
+    color: #666;
+}
+
+.select-container {
+    width: 100%;
+}
+
+.select-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.select-label i {
+    margin-right: 8px;
+    color: #666;
+}
+
+.form-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
 .errorlist {
     list-style: none;        /* remove default bullets */
     padding: 12px;           /* space inside the box */
@@ -26,12 +115,14 @@
 .errorlist li:last-child {
     margin-bottom: 0;
 }
+
 .error {
     color: red;
     font-weight: bold;
 }
 </style>
 {% endblock %}
+
 {% block content %}
     <div class="form-container">
         {% if form.non_field_errors %}
@@ -49,78 +140,108 @@
             action="{% if enrollment %}{% url 'students:enrollments-update' enrollment.pk %}{% else %}{% url 'students:enrollments-create' %}{% endif %}"
         >
             {% csrf_token %}
-            <div class="form-group">
-                <label for="course">Select course</label>
-                <select id="course" name="course" required>
-                <option value="" disabled {% if not enrollment %}selected{% endif %}>-- Select a course --</option>
-                {% for course in courses %}
-                    <option value="{{ course.id }}"
-                        {% if form.course.value == course.id|stringformat:"s"  %}selected{% endif %}>
-                        {{ course.name }} ({{ course.code }})
-                    </option>
-                {% endfor %}
-                </select>
-                {% if form.course.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.course.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <label for="student">Select student</label>
-                <select id="student" name="student" required>
-                <option value="" disabled {% if not enrollment %}selected{% endif %}>-- Select a student --</option>
-                {% for student in students %}
-                    <option value="{{ student.id }}"
-                        {% if form.student.value == student.id|stringformat:"s" %}selected{% endif %}>
-                    {{ student.first_name }}
-                    </option>
-                {% endfor %}
-                </select>
-                {% if form.student.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.student.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                <label for="enrollment_date">
-                    Enrollment Date
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-calendar-alt"></i>
-                <input 
-                    type="date" id="enrollment_date" name="enrollment_date" 
-                   value="{% if form.enrollment_date.value %}{{ form.enrollment_date.value|date:'Y-m-d' }}{% endif %}"
-                >
-                {% if form.enrollment_date.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.enrollment_date.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+            <div class="grid">
+                <div class="form-group select-container">
+                    <div class="select-label">
+                        <i class="fas fa-book"></i>
+                        <label for="course">Select Course</label>
+                    </div>
+                    <select id="course" name="course" class="form-select" required>
+                    <option value="" disabled {% if not enrollment %}selected{% endif %}>-- Select a course --</option>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}"
+                            {% if form.course.value|stringformat:"s" == course.id|stringformat:"s"  %}selected{% endif %}>
+                            {{ course.name }} ({{ course.code }})
+                        </option>
+                    {% endfor %}
+                    </select>
+                    {% if form.course.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.course.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group select-container">
+                    <div class="select-label">
+                        <i class="fas fa-user-graduate"></i>
+                        <label for="student">Select Student</label>
+                    </div>
+                    <select id="student" name="student" class="form-select" required>
+                    <option value="" disabled {% if not enrollment %}selected{% endif %}>-- Select a student --</option>
+                    {% for student in students %}
+                        <option value="{{ student.id }}"
+                            {% if form.student.value|stringformat:"s" == student.id|stringformat:"s" %}selected{% endif %}>
+                        {{ student.user.first_name }} {{ student.user.last_name }}
+                        </option>
+                    {% endfor %}
+                    </select>
+                    {% if form.student.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.student.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="enrollment_date">
+                        Enrollment Date
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    <input 
+                        type="date" id="enrollment_date" name="enrollment_date" 
+                       value="{% if form.enrollment_date.value %}{{ form.enrollment_date.value|date:'Y-m-d' }}{% endif %}"
+                    >
+                    {% if form.enrollment_date.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.enrollment_date.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="score">
+                        Score
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-chart-line"></i>
+                    <input type="number" id="score" name="score" value="{% if form.score.value %}{{form.score.value}}{% endif %}" min="0" max="100" step="0.01">
+                    {% if form.score.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.score.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="score">
-                    Score
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-pencil"></i>
-                <input type="number" id="score" name="score" value="{% if form.score.value %}{{form.score.value}}{% endif %}" min="0", max="100" step="0.01">
-                {% if form.score.errors %}
+            
+            <div class="form-group metadata-container">
+                <div class="metadata-label">
+                    <i class="fas fa-tags"></i>
+                    <label for="id_metadata">Select Metadata</label>
+                </div>
+                <div class="checkbox-group">
+                    {% for choice in form.metadata %}
+                        <div class="checkbox-item {% if choice.data.selected %}checked{% endif %}">
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.metadata.errors %}
                     <ul class="errorlist">
-                        {% for error in form.score.errors %}
+                        {% for error in form.metadata.errors %}
                             <li>{{ error }}</li>
                         {% endfor %}
                     </ul>
                 {% endif %}
-                </div>
             </div>
             
             <div class="form-actions">
@@ -138,20 +259,49 @@
 {% block extra_js %}
 {{ block.super }}
 <script>
-    //document.addEventListener('DOMContentLoaded', function() {
-    //    const formGroups = document.querySelectorAll('.form-group');
-    //
-    //    formGroups.forEach((group, index) => {
-    //        group.style.opacity = "0";
-    //        group.style.transform = "translateY(10px)";
-    //
-    //        setTimeout(() => {
-    //            group.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-    //            group.style.opacity = "1";
-    //            group.style.transform = "translateY(0)";
-    //        }, 100 + (index * 100));
-    //    });
-    //
-    //});
+    document.addEventListener('DOMContentLoaded', function() {
+        const formGroups = document.querySelectorAll('.form-group');
+
+        formGroups.forEach((group, index) => {
+            group.style.opacity = "0";
+            group.style.transform = "translateY(10px)";
+
+            setTimeout(() => {
+                group.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                group.style.opacity = "1";
+                group.style.transform = "translateY(0)";
+            }, 100 + (index * 100));
+        });
+
+        // Handle checkbox styling for metadata
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
+        checkboxItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            
+            // Initial state
+            if (checkbox && checkbox.checked) {
+                item.classList.add('checked');
+            }
+            
+            // Handle checkbox changes
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            }
+            
+            // Make the entire item clickable
+            item.addEventListener('click', function(e) {
+                if (e.target.type !== 'checkbox') {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    });
 </script>
 {% endblock %}

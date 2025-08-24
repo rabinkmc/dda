@@ -1,4 +1,4 @@
-from students.models import Enrollment, Student, Course
+from students.models import Enrollment, Student, Course, MetaData
 from django.utils import timezone
 from django import forms
 from common.forms import BaseModelForm
@@ -13,6 +13,11 @@ class StudentForm(BaseModelForm):
     last_name = forms.CharField(max_length=30)
     date_of_birth = forms.DateField(required=False)
     email = forms.EmailField(required=True)
+    metadata = forms.ModelMultipleChoiceField(
+        queryset=MetaData.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
 
     def clean_date_of_birth(self):
         date_of_birth = self.cleaned_data.get("date_of_birth")
@@ -24,7 +29,7 @@ class StudentForm(BaseModelForm):
         email = self.cleaned_data["email"]
         qs = User.objects.filter(email=email)
         if self.instance:
-            qs.exclude(id=self.instance.user.id)
+            qs = qs.exclude(pk=self.instance.user.pk)
         if qs.exists():
             raise forms.ValidationError("The email already exists.")
         return email
@@ -38,12 +43,17 @@ class InstructorForm(BaseModelForm):
         queryset=Course.objects.all(),
         required=False,
     )
+    metadata = forms.ModelMultipleChoiceField(
+        queryset=MetaData.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
 
     def clean_email(self):
         email = self.cleaned_data["email"]
         qs = User.objects.filter(email=email)
         if self.instance:
-            qs.exclude(id=self.instance.user.id)
+            qs = qs.exclude(pk=self.instance.user.pk)
         if qs.exists():
             raise forms.ValidationError("The email already exists.")
         return email
@@ -53,6 +63,11 @@ class CourseForm(BaseModelForm):
     name = forms.CharField(max_length=100)
     code = forms.CharField(max_length=100)
     description = forms.CharField(widget=forms.Textarea)
+    metadata = forms.ModelMultipleChoiceField(
+        queryset=MetaData.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )
 
     def clean_code(self):
         code = self.cleaned_data["code"]
@@ -70,6 +85,11 @@ class EnrollmentForm(BaseModelForm):
     score = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
     enrollment_date = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"type": "date"})
+    )
+    metadata = forms.ModelMultipleChoiceField(
+        queryset=MetaData.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
     )
 
     def clean(self):

@@ -1,6 +1,70 @@
 {% extends 'layout.html' %}
 {% block title %}{% if student %}Edit{% else %}Add{% endif %} Student - EduApp{% endblock %}
 
+{% block extra_css %}
+{{ block.super }}
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.checkbox-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+.checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-item.checked {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.metadata-container {
+    width: 100%;
+}
+
+.metadata-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.metadata-label i {
+    margin-right: 8px;
+    color: #666;
+}
+</style>
+{% endblock %}
+
 {% block page_title %}Students{% endblock %}
 {% block content %}
     <div class="form-container">
@@ -9,7 +73,7 @@
             action="{% if student %}{% url 'students:update' student.pk %}{% else %}{% url 'students:create' %}{% endif %}"
         >
             {% csrf_token %}
-            
+        <div class="grid">
             <div class="form-group">
                 <label for="first_name" class="required">
                 First Name
@@ -26,7 +90,6 @@
                 {% endif %}
                 </div>
             </div>
-            
             <div class="form-group">
                 <label for="last_name" class="required">
                     Last Name
@@ -60,7 +123,6 @@
                 {% endif %}
                 </div>
             </div>
-            
             <div class="form-group">
                 <label for="date_of_birth">
                     Date of Birth
@@ -76,7 +138,29 @@
                     </ul>
                 {% endif %}
                 </div>
-
+            </div>
+            </div>
+            
+            <div class="form-group metadata-container">
+                <div class="metadata-label">
+                    <i class="fas fa-tags"></i>
+                    <label for="id_metadata">Select Metadata</label>
+                </div>
+                <div class="checkbox-group">
+                    {% for choice in form.metadata %}
+                        <div class="checkbox-item {% if choice.data.selected %}checked{% endif %}">
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.metadata.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.metadata.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
             
             <div class="form-actions">
@@ -108,6 +192,35 @@
             }, 100 + (index * 100));
         });
         
+        // Handle checkbox styling
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
+        checkboxItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            
+            // Initial state
+            if (checkbox && checkbox.checked) {
+                item.classList.add('checked');
+            }
+            
+            // Handle checkbox changes
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            }
+            
+            // Make the entire item clickable
+            item.addEventListener('click', function(e) {
+                if (e.target.type !== 'checkbox') {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
     });
 </script>
 {% endblock %}

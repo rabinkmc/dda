@@ -1,8 +1,104 @@
 {% extends 'layout.html' %}
 {% block title %}{% if course %}Edit{% else %}Add{% endif %} Course - EduApp{% endblock %}
 
-{% block page_title %}Courses{% endblock %}
+{% block extra_css %}
+{{ block.super }}
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+}
 
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.checkbox-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 8px;
+    margin-left: 0;
+}
+
+.checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-item.checked {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.metadata-container {
+    width: 100%;
+}
+
+.metadata-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.metadata-label i {
+    margin-right: 8px;
+    color: #666;
+}
+
+.description-container {
+    width: 100%;
+}
+
+.description-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.description-textarea:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.input-icon textarea {
+    padding-left: 40px;
+}
+
+.input-icon i {
+    position: absolute;
+    left: 12px;
+    top: 15px;
+    color: #666;
+}
+</style>
+{% endblock %}
+
+{% block page_title %}Courses{% endblock %}
 {% block content %}
 <div class="form-container">
         <form 
@@ -11,48 +107,85 @@
         >
             {% csrf_token %}
             
-            <div class="form-group">
-                <label for="Name" class="required">
-                Course Name
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-user"></i>
-                <input type="text" id="name" name="name" value="{%if form.name.value %}{{form.name.value}}{% endif %}" required>
-                {% if form.name.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.name.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+            <div class="grid">
+                <div class="form-group">
+                    <label for="name" class="required">
+                    Course Name
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-book"></i>
+                    <input type="text" id="name" name="name" value="{% if form.name.value %}{{form.name.value}}{% endif %}" required>
+                    {% if form.name.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.name.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <label for="Code" class="required">
-                Course Code
-                </label>
-                <div class="input-icon">
-                    <i class="fas fa-user"></i>
-                <input type="text" id="code" name="code" value="{%if form.code.value %}{{form.code.value}}{% endif %}" required>
-                {% if form.code.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.code.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                <div class="form-group">
+                    <label for="code" class="required">
+                    Course Code
+                    </label>
+                    <div class="input-icon">
+                        <i class="fas fa-code"></i>
+                    <input type="text" id="code" name="code" value="{% if form.code.value %}{{form.code.value}}{% endif %}" required>
+                    {% if form.code.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.code.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="last_name" class="required">
+            <div class="form-group description-container">
+                <label for="description" class="required">
                     Description
                 </label>
                 <div class="input-icon">
-                      <textarea name="description" cols="40" rows="5" placeholder="Enter notes here..." required id="id_notes">
-                      </textarea>
+                    <i class="fas fa-align-left"></i>
+                    <textarea 
+                        name="description" 
+                        id="description" 
+                        class="description-textarea"
+                        placeholder="Enter course description here..." 
+                        required>{% if form.description.value %}{{form.description.value}}{% endif %}</textarea>
+                    {% if form.description.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.description.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
             </div>
+            
+            <div class="form-group metadata-container">
+                <div class="metadata-label">
+                    <i class="fas fa-tags"></i>
+                    <label for="id_metadata">Select Metadata</label>
+                </div>
+                <div class="checkbox-group">
+                    {% for choice in form.metadata %}
+                        <div class="checkbox-item {% if choice.data.selected %}checked{% endif %}">
+                            {{ choice.tag }}
+                            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.metadata.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.metadata.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
             <div class="form-actions">
                 <a href="{% url 'students:courses-list' %}" class="btn btn-secondary">
                     Back to List
@@ -82,6 +215,35 @@
             }, 100 + (index * 100));
         });
         
+        // Handle checkbox styling for metadata
+        const checkboxItems = document.querySelectorAll('.checkbox-item');
+        checkboxItems.forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            
+            // Initial state
+            if (checkbox && checkbox.checked) {
+                item.classList.add('checked');
+            }
+            
+            // Handle checkbox changes
+            if (checkbox) {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            }
+            
+            // Make the entire item clickable
+            item.addEventListener('click', function(e) {
+                if (e.target.type !== 'checkbox') {
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
     });
 </script>
 {% endblock %}
