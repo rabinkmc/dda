@@ -66,9 +66,7 @@ class Enrollment(BaseModel):
         validators=[validate_score],
     )
     metadata = models.ManyToManyField(MetaData, blank=True, related_name="enrollments")
-    grade = models.CharField(
-        max_length=2, choices=GRADE_CHOICES, default="NA", blank=True
-    )
+    grade = models.CharField(max_length=2, choices=GRADE_CHOICES, default="NA")
 
     class Meta:
         constraints = [
@@ -80,6 +78,9 @@ class Enrollment(BaseModel):
         indexes = [
             models.Index(fields=["student", "course"]),
         ]
+
+    def __str__(self):
+        return f"{self.student} -> {self.course}"
 
     # although  grade is a computed property, we keep
     # it in the model for historical reasons also, this makes it
@@ -105,8 +106,9 @@ class Enrollment(BaseModel):
         else:
             return "F"
 
-    def __str__(self):
-        return f"{self.student} -> {self.course}"
+    def save(self, *args, **kwargs):
+        self.grade = self.grade_score
+        super().save(*args, **kwargs)
 
 
 class Instructor(BaseModel):
