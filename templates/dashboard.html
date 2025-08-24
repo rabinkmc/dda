@@ -128,19 +128,43 @@
         <div class="quick-actions">
             <a class="btn btn-primary" href="{% url 'students:list' %}" class="quick-action">
                 <i class="icon-users"></i>
-                <span>Manage Students</span>
+                <span>
+                {% if is_admin %}
+                Manage Students
+                {% else %}
+                View Students
+                {% endif %}
+                </span>
             </a>
             <a class="btn btn-primary" href="{% url 'students:courses-list' %}" class="quick-action">
                 <i class="icon-book"></i>
-                <span>View Courses</span>
+                <span>
+                {% if is_admin %}
+                Manage Courses 
+                {% else %}
+                View Courses
+                {% endif %}
+                </span>
             </a>
             <a class="btn btn-primary" href="{% url 'students:instructors-list' %}" class="quick-action">
                 <i class="icon-user-check"></i>
-                <span>Instructor List</span>
+                <span>
+                {% if is_admin %}
+                Manage Instructors 
+                {% else %}
+                View Instructors
+                {% endif %}
+                </span>
             </a>
             <a class="btn btn-primary" href="{% url 'students:enrollments-list' %}" class="quick-action">
                 <i class="icon-clipboard"></i>
-                <span>Track Enrollments</span>
+                <span>
+                {% if is_admin %}
+                Manage Enrollments 
+                {% else %}
+                View Enrollments
+                {% endif %}
+                </span>
             </a>
         </div>
     </div>
