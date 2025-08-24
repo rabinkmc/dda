@@ -1,3 +1,17 @@
+## Demo
+To view the live demo of the project, you can visit [https://dda.rabindhamala.com.np](https://dda.rabindhamala.com.np)
+
+superuser credentials:
+- username: `admin`, password: `admin123`
+
+student credentials: (currently readonly)
+- username: `rabin`, password: `test123`
+- username: `simran`, password: `test123`
+- username: `rakesh`, password: `test123`
+- username: `priyanka`, password: `test123`
+
+normaluser credentials:
+
 ## Design decisions
 
 - Each student and instructor is also a user. So, there is one to one relationship between user and student/instructor.
@@ -17,6 +31,9 @@
 - [ ] Add more tests
 - [ ] Make permissions more granular
 - [ ] Extract the repeated UI style and javascript into a separate file
+- [ ] For customer support forum, host a discourse server
+- [ ] Generate documentation with mkdocs
+- [ ] Custom error pages(404, 401, 403, 500) served by nginx
 
 
 ## To run the project locally
@@ -67,6 +84,11 @@ docker compose up --build --detach
 ```
 python manage.py test 
 ```
+## Github hooks
+- [X] Currently automated tests are run on every push to the `main`  and `dev` branch.
+- [ ] Automated deployment to production on every push to the `main` branch.
 
 ## Deployment
 Current setup is to push to remote repo and run docker container with nginx acting as reverse proxy
+- [ ] Use github actions to automate deployment to production server
+- [ ] Have dedicated documenation for server config, currently hosting on ec2 instance
