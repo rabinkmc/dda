@@ -72,9 +72,10 @@ python manage.py runserver
 for docker, there are two profiles. One is `dev` and the other is `prod`. 
 Specify the profile in the `.env` file with `COMPOSE_PROFILES=dev` or `COMPOSE_PROFILES=prod`.
 
-To run the docker container, run the following command:
+To run the docker container, run the following command (just make sure, you set the env variables):
 
 ```bash
+cp sample.env .env
 docker compose up --build --detach
 ```
 
