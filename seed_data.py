@@ -7,6 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
 # Now you can import models and use Django ORM
+from common.models import MetaData
 from students.models import Student, Course, Instructor
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -107,7 +108,49 @@ def main():
                 grade=get_grade(),
                 score=get_score(),
             )
+    # preference
+    # populate metadata to track preferences
+    # populate metadata to track extra cocurricular activities
+    MetaData.objects.bulk_create(
+        [
+            MetaData(
+                key="preferences.theme",
+                value="dark",
+            ),
+            MetaData(
+                key="preferences.theme",
+                value="dark",
+            ),
+            MetaData(
+                key="cocurricular_activities",
+                value="['wushu', 'basketball', 'drawing']",
+            ),
+        ]
+    )
+
+
+def create_metadata():
+    MetaData.objects.bulk_create(
+        [
+            # Student
+            MetaData(key="hobby", value="chess"),
+            MetaData(key="blood_group", value="O+"),
+            MetaData(key="transport_mode", value="bus"),
+            # Course
+            MetaData(key="difficulty", value="advanced"),
+            MetaData(key="department", value="CS"),
+            MetaData(key="semester", value="Fall 2025"),
+            # Enrollment
+            MetaData(key="enrollment_type", value="audit"),
+            MetaData(key="discount", value="scholarship"),
+            MetaData(key="completed", value="yes"),
+            # Instructor
+            MetaData(key="research_area", value="AI"),
+            MetaData(key="office_hours", value="Mon 2–4pm"),
+            MetaData(key="linkedin", value="https://linkedin.com/in/example"),
+        ]
+    )
 
 
 if __name__ == "__main__":
-    main()
+    create_metadata()
