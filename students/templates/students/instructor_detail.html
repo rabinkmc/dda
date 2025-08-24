@@ -19,7 +19,10 @@
     <h2>{{ instructor.first_name }} {{instructor.last_name}}</h2>
 <div class="actions">
     <a class="btn btn-primary" href="{% url 'students:instructors-update' instructor.id %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'students:instructors-delete' instructor.id %}">Delete</a>
+    <form method="post" action="{% url 'students:instructors-delete' instructor.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
     <a class="btn btn-primary" href="{% url 'students:instructors-list' %}">Back to List</a>
 </div>
 </div>

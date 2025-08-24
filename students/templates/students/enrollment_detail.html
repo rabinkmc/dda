@@ -34,10 +34,11 @@
     </div>
 <div class="actions">
     <a class="btn btn-primary" href="{% url 'students:enrollments-update' enrollment.id %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'students:enrollments-delete' enrollment.id %}">Delete</a>
+    <form method="post" action="{% url 'students:enrollments-delete' enrollment.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
     <a class="btn btn-primary" href="{% url 'students:enrollments-list' %}">Back to List</a>
 </div> 
 </div>
 {% endblock %}
-
-

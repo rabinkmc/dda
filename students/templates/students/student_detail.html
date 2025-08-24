@@ -14,6 +14,7 @@
 </style>
 {% endblock %}
 
+{% block page_title %} Students {% endblock %}
 {% block content %}
 <div class="student-detail">
 <h1>{{ student.first_name }} {{ student.last_name }}</h1>
@@ -28,7 +29,10 @@
 </p>
 <div class="actions">
     <a class="btn btn-primary" href="{% url 'students:update' student.id %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'students:delete' student.id %}">Delete</a>
+    <form method="post" action="{% url 'students:delete' student.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
     <a class="btn btn-primary" href="{% url 'students:list' %}">Back to List</a>
 </div>
 </div>
