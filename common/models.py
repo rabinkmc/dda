@@ -36,7 +36,9 @@ class MetaData(models.Model):
         return f"{self.key}: {self.value}"
 
     class Meta:
-        ordering = "key"
+        ordering = [
+            "key",
+        ]
         constraints = [
             models.UniqueConstraint(fields=["key", "value"], name="unique_key_value")
         ]

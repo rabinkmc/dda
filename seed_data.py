@@ -15,6 +15,29 @@ from django.db import transaction
 User = get_user_model()
 
 
+def create_metadata():
+    MetaData.objects.bulk_create(
+        [
+            # Student
+            MetaData(key="hobby", value="chess"),
+            MetaData(key="blood_group", value="O+"),
+            MetaData(key="transport_mode", value="bus"),
+            # Course
+            MetaData(key="difficulty", value="advanced"),
+            MetaData(key="department", value="CS"),
+            MetaData(key="semester", value="Fall 2025"),
+            # Enrollment
+            MetaData(key="enrollment_type", value="audit"),
+            MetaData(key="discount", value="scholarship"),
+            MetaData(key="completed", value="yes"),
+            # Instructor
+            MetaData(key="research_area", value="AI"),
+            MetaData(key="office_hours", value="Mon 2–4pm"),
+            MetaData(key="linkedin", value="https://linkedin.com/in/example"),
+        ]
+    )
+
+
 @transaction.atomic()
 def main():
     # create users
@@ -127,30 +150,8 @@ def main():
             ),
         ]
     )
-
-
-def create_metadata():
-    MetaData.objects.bulk_create(
-        [
-            # Student
-            MetaData(key="hobby", value="chess"),
-            MetaData(key="blood_group", value="O+"),
-            MetaData(key="transport_mode", value="bus"),
-            # Course
-            MetaData(key="difficulty", value="advanced"),
-            MetaData(key="department", value="CS"),
-            MetaData(key="semester", value="Fall 2025"),
-            # Enrollment
-            MetaData(key="enrollment_type", value="audit"),
-            MetaData(key="discount", value="scholarship"),
-            MetaData(key="completed", value="yes"),
-            # Instructor
-            MetaData(key="research_area", value="AI"),
-            MetaData(key="office_hours", value="Mon 2–4pm"),
-            MetaData(key="linkedin", value="https://linkedin.com/in/example"),
-        ]
-    )
+    create_metadata()
 
 
 if __name__ == "__main__":
-    create_metadata()
+    main()
