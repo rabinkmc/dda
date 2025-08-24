@@ -88,11 +88,11 @@ class EnrollmentForm(BaseModelForm):
 
 
 class MetaDataForm(BaseModelForm):
-    name = forms.CharField(max_length=100)
+    key = forms.CharField(max_length=100)
     value = forms.CharField(max_length=255)
 
     def clean(self):
         cleaned_data = super().clean()
-        if not cleaned_data.get("name") or not cleaned_data.get("value"):
+        if not cleaned_data.get("key") or not cleaned_data.get("value"):
             raise forms.ValidationError("Both name and value are required.")
         return cleaned_data
