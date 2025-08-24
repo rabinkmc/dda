@@ -30,14 +30,14 @@ def metadata_list(request):
     return render(
         request,
         "common/metadata_list.html",
-        {"metadata": metadata, "page_obj": page_obj},
+        {"metadatas": metadata, "page_obj": page_obj},
     )
 
 
 @user_passes_test(is_admin)
 def metadata_detail(request, pk):
     metadata = get_object_or_404(MetaData, pk=pk)
-    return render(request, "metadata/metadata_detail.html", {"metadata": metadata})
+    return render(request, "common/metadata_detail.html", {"metadata": metadata})
 
 
 @user_passes_test(is_admin)
@@ -52,7 +52,7 @@ def metadata_create(request):
             )
             return redirect("common:metadata-list")
     return render(
-        request, "metadata/metadata_form.html", {"form": form, "metadata": None}
+        request, "common/metadata_form.html", {"form": form, "metadata": None}
     )
 
 
@@ -74,7 +74,7 @@ def metadata_update(request, pk):
         }
         form = MetaDataForm(initial=initial_data)
     return render(
-        request, "metadata/metadata_form.html", {"form": form, "metadata": metadata}
+        request, "common/metadata_form.html", {"form": form, "metadata": metadata}
     )
 
 

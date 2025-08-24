@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block title %}{{ metadata.code }} - EduApp{% endblock %}
+
+{% block extra_css %}
+{{ block.super }}
+<style>
+.metadata-detail {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    gap: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="metadata-detail">
+<h1>{{ metadata.key }}</h1>
+<p> {{ metadata.value }}</p>
+<div>
+    <a class="btn btn-primary" href="{% url 'common:metadata-update' metadata.id %}">Edit</a>
+    <form method="post" action="{% url 'common:metadata-delete' metadata.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+    <a class="btn btn-primary" href="{% url 'common:metadata-list' %}">Back to List</a>
+</div>
+</div>
+{% endblock %}
+
+

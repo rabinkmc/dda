@@ -4,8 +4,9 @@ from students.views import dashboard
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("students/", include("students.urls")),
     path("users/", include("users.urls")),
+    path("common/", include("common.urls")),
+    path("admin/", admin.site.urls),
     path("", dashboard, name="dashboard"),
 ]

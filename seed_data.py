@@ -29,7 +29,7 @@ def create_metadata():
             # Enrollment
             MetaData(key="enrollment_type", value="audit"),
             MetaData(key="discount", value="scholarship"),
-            MetaData(key="completed", value="yes"),
+            MetaData(key="enrollment_completed", value="yes"),
             # Instructor
             MetaData(key="research_area", value="AI"),
             MetaData(key="office_hours", value="Mon 2–4pm"),

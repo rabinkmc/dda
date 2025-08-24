@@ -79,10 +79,12 @@
                                 <i class="icon-user"></i>
                                 Profile
                             </a>
-                            <a href="#" class="dropdown-item text-charcoal">
+                            {% if is_admin %}
+                            <a href="{% url 'common:metadata-list' %}" class="dropdown-item text-charcoal">
                                 <i class="icon-settings"></i>
-                                Settings
+                                Metadata
                             </a>
+                            {% endif %}
                             <div class="dropdown-divider"></div>
                             <a href="{% url 'users:logout' %}" class="dropdown-item text-danger">
                                 <i class="icon-log-out"></i>
