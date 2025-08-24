@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.http import require_POST
 
-from students.permissions import is_admin, is_own_student, is_own_enrollment
+from users.permissions import is_admin, is_own_student, is_own_enrollment
 
 User = get_user_model()
 
