@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+{% block title %}Metadata - EduApp{% endblock %}
+
+{% block page_title %}Metadata{% endblock %}
+
+{% block content %}
+<div class="card-header">
+<h1>Metadata</h1>
+<form method="get" class="mb-3">
+    <div class="flex-search"> 
+    <input type="text" name="q" placeholder="Search by key..." value="{{ query }}">
+    <button class="btn" type="submit">Search</button>
+    </div>
+</form>
+{% if is_admin %}
+<a href="{% url 'common:metadata-create' %}" class="btn btn-primary">Add New Key</a>
+{% endif %}
+</div>
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for metadata in metadatas %}
+        <tr>
+            <td>{{ metadata.id }}</td>
+            <td>{{ metadata.key }}</td>
+            <td>{{ metadata.value }}</td>
+            <td>
+                <a class="btn btn-primary" href="{% url 'common:metadata-detail' metadata.id %}">View</a>
+                {% if is_admin %}
+                <a class="btn btn-primary" href="{% url 'common:metadata-update' metadata.id %}">Edit</a>
+                <form method="post" action="{% url 'common:metadata-delete' metadata.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No metadata found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
